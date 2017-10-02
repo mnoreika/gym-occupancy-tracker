@@ -1,10 +1,7 @@
 import requests
 import time
-import sched
 
 from lxml import html
-
-job = sched.scheduler(time.time, time.sleep)
 
 def getPeopleInGymNumber():
     response = requests.get("https://www.st-andrews.ac.uk/sport/");
@@ -21,15 +18,11 @@ def getTime():
 
 def record_gym_activity():
     with open("data.csv", "a") as datafile:
-        datafile.write(getTime() + " " + getPeopleInGymNumber() + "\n")
+        datafile.write(getTime() + ", " + getPeopleInGymNumber() + "\n")
         print ("Data has been recorded.")
-
-        job.enter(5, 1, record_gym_activity, ())
-        job.run()
-
 
 print ("Running gym occupancy tracker job...")
 
-job.enter(300, 1, record_gym_activity, ())
-job.run()
-
+while True:
+    record_gym_activity()
+    time.sleep(300)
